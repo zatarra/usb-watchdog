@@ -20,11 +20,11 @@ This means that if you set a threshold of 10 seconds and for some reason your co
 
 ## Buy me a beer
 If you find this script useful, buying me a beer would be much appreciated :)
-
-bitcoin: 3Mj3v5hrx5qQhwzzWPMGwkJ8DRMCywhZFy
-bitcoin cash: 1KDbjLM9DdsCyfDMSYHdm52r5R3BRP2dfS
-ethereum: 0xfF7167e9ea8A4d882dd9161FC5F1560B9031A6c6
-litecoin: MERSbMVM9NmQoDhr5ktswpaumWk8dGbyUu
-ripple: rN1sXzZUBej2wiZSjgKtAgNRTUoFhUdt36 
-stellar: GBYS4JGPYZI774ZIU3KNEKSDUK2E3VMXQO4AZTHAO7WU4EZRSG7QF5MG
-
+```
+*bitcoin:* 3Mj3v5hrx5qQhwzzWPMGwkJ8DRMCywhZFy
+*bitcoin cash:* 1KDbjLM9DdsCyfDMSYHdm52r5R3BRP2dfS
+*ethereum:* 0xfF7167e9ea8A4d882dd9161FC5F1560B9031A6c6
+*litecoin:* MERSbMVM9NmQoDhr5ktswpaumWk8dGbyUu
+*ripple:* rN1sXzZUBej2wiZSjgKtAgNRTUoFhUdt36 
+*stellar:* GBYS4JGPYZI774ZIU3KNEKSDUK2E3VMXQO4AZTHAO7WU4EZRSG7QF5MG
+```
