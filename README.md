@@ -1,4 +1,6 @@
 # usb-watchdog
+[Original blogpost](http://www.davidgouveia.net/2018/02/how-to-create-your-own-script-for-a-usb-watchdog/)
+
 ## What is it?
 Python script to allow you to control a usb watchdog
 
