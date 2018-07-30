@@ -14,8 +14,24 @@ class UsbWatchDog(object):
         self.heartbeat = heartbeat if 10 < heartbeat <= 360 else 10
         self.port = port
         self.watchdog = serial.Serial(self.port, baud)
-        self.run
+        #self.run
         
+    def _read(self, byte):
+        try:
+            self.watchdog.write(bytes([byte]))
+            self.watchdog.flush()
+            a = self.read()
+            print(a)
+        except Exception as e:
+            raise Exception('Error while reading: {}'.format(e))
+
+    def _write(self, byte):
+        try:
+            self.watchdog.write(bytes([byte]))
+            self.watchdog.flush()
+        except Exception as e:
+            raise Exception('Error while writing: {}'.format(e))
+
     def get_info(self):
         ''' TODO: get current system info
         '''
@@ -35,24 +51,27 @@ class UsbWatchDog(object):
         ''' Interval ( in seconds ) = n/10,
         This number will always be rounded to the closest integer. '''
         try:
-            interval = int(self.heartbeat)/10
+            interval = int(self.heartbeat/10)
         except Exception as e:
             logging.warn("Interval seems invalids. Error {}".format(e))
 
         logging.debug ("Heartbeat configured for {} second(s) intervals"
                        .format(interval*10))
         while True:
+            logging.debug("1")
             self.watchdog.write(chr(interval))
             self.watchdog.flush()
-            time.sleep(1)
+            time.sleep(0.5)
 
-    def reset_now(self):
+    def reset(self):
         ''' Restart Now
         '''
         logging.debug('Restart Now')
-        self.watchdog.write(chr(255))
-        self.watchdog.flush()
-        time.sleep(1)
+        try:
+            self._write(255)
+        except Exception as e:
+            print('Error {}'.format(e))
+            logging.warning('Error {}'.format(e))
 
     def change_timeout_seconds(self, timeout):
         ''' Change Heartbeat timeout
