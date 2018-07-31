@@ -10,16 +10,18 @@ from datetime import timedelta
 
 class UsbWatchDog(object):
 
-    def __init__(self, port, heartbeat=10, baud=9600):
+    def __init__(self, port, heartbeat=10, baud=9600, daemon=True):
         self.heartbeat = heartbeat if 10 < heartbeat <= 360 else 10
         self.port = port
         self.watchdog = serial.Serial(self.port, baud)
-        #self.run
-        
+        if daemon:
+            run = threading.Thread(target=self.run)
+            run.daemon = False
+            run.start()
+            
     def _read(self, byte):
         try:
-            self.watchdog.write(bytes([byte]))
-            self.watchdog.flush()
+            self._write(byte)
             a = self.read()
             print(a)
         except Exception as e:
@@ -49,7 +51,9 @@ class UsbWatchDog(object):
         
     def run(self):
         ''' Interval ( in seconds ) = n/10,
-        This number will always be rounded to the closest integer. '''
+        This number will always be rounded to the closest integer.
+        If daemon variable is set, run this as a thread in background
+        '''
         try:
             interval = int(self.heartbeat/10)
         except Exception as e:
@@ -58,10 +62,9 @@ class UsbWatchDog(object):
         logging.debug ("Heartbeat configured for {} second(s) intervals"
                        .format(interval*10))
         while True:
-            logging.debug("1")
-            self.watchdog.write(chr(interval))
-            self.watchdog.flush()
-            time.sleep(0.5)
+            logging.debug ("Heartbeat {}".format(interval*10))
+            self._write(interval)
+            time.sleep(5)
 
     def reset(self):
         ''' Restart Now
@@ -82,12 +85,7 @@ class UsbWatchDog(object):
             self.heartbeat = int(timeout) if 10 < int(timeout) <= 360 else 10
         except ValueError as e:
             logging.warning('Invalid type, integer is required. Error {}'.format(e))
-            raise TypeError
-
-    def scheduled_restart(self):
-        ''' TODO: scheduled restart method
-        '''
-        pass
+            raise TypeError        
 
     def check_internet(self):
         ''' Test internet connection
@@ -111,19 +109,13 @@ if __name__ == '__main__':
                         '(e.g. 180 seconds). 10 second increments only. '
                         'Default: 10 seconds, Max: 360')
     args = parser.parse_args()
-
-    heartbeat = args.hb
-    port = args.port
+    hb = 10 if not args.hb else args.hb
 
     try:
-        device = UsbWatchDog(port, heartbeat)
+        device = UsbWatchDog(args.port, hb, daemon=False)
         logging.debug('Device Information {}'.format(device.get_info()))
-        time.sleep(2)
-        device.change_timeout_seconds(140)
-        time.sleep(1)
-        logging.debug('Device Information {}'.format(device.get_info()))
-        while True:
-            pass
+        device.run()
+
     except (KeyboardInterrupt, SystemExit):
         logging.warning("Keyboard interrupt")
         sys.exit()
