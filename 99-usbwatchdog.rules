@@ -1,0 +1,9 @@
+ACTION=="remove", GOTO="usbwatchdog_end"
+SUBSYSTEM!="tty", GOTO="usbwatchdog_end"
+
+ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", ENV{ID_MM_DEVICE_IGNORE}="1"
+ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", SYMLINK+="ttyWDG", ENV{SYSTEMD_WANTS}="usb-watchdog.service"
+
+
+LABEL="usbwatchdog_end"
+

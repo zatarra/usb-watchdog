@@ -1,0 +1,12 @@
+[Unit]
+Description=USB-Watchdog
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/sbin/watchdog.py --hb 180 /dev/ttyWDG
+StandardInput=tty-force
+StandardOutput=journal
+
+
+[Install]
+WantedBy=multi-user.target
