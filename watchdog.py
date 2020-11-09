@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import logging
 import sys
 import time
@@ -25,6 +25,7 @@ class UsbWatchDog(object):
             a = self.read()
             print(a)
         except Exception as e:
+            systemd.daemon.notify('STOPPING=1')
             raise Exception('Error while reading: {}'.format(e))
 
     def _write(self, byte):
@@ -61,6 +62,7 @@ class UsbWatchDog(object):
 
         logging.debug ("Heartbeat configured for {} second(s) intervals"
                        .format(interval*10))
+        systemd.daemon.notify('READY=1')
         while True:
             logging.debug ("Heartbeat {}".format(interval*10))
             self._write(interval)
@@ -85,7 +87,7 @@ class UsbWatchDog(object):
             self.heartbeat = int(timeout) if 10 < int(timeout) <= 360 else 10
         except ValueError as e:
             logging.warning('Invalid type, integer is required. Error {}'.format(e))
-            raise TypeError        
+            raise TypeError
 
     def check_internet(self):
         ''' Test internet connection
@@ -99,7 +101,9 @@ class UsbWatchDog(object):
 
 
 if __name__ == '__main__':
+    import systemd.daemon
     logging.basicConfig(level=logging.DEBUG)
+    
     parser = argparse.ArgumentParser(
         description='Python Script to allow you to control a usb watchdog')
     parser.add_argument('port', type=str, 
@@ -110,7 +114,6 @@ if __name__ == '__main__':
                         'Default: 10 seconds, Max: 360')
     args = parser.parse_args()
     hb = 10 if not args.hb else args.hb
-
     try:
         device = UsbWatchDog(args.port, hb, daemon=False)
         logging.debug('Device Information {}'.format(device.get_info()))
@@ -118,5 +121,6 @@ if __name__ == '__main__':
 
     except (KeyboardInterrupt, SystemExit):
         logging.warning("Keyboard interrupt")
+        systemd.daemon.notify('STOPPING=1')
         sys.exit()
 

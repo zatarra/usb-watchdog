@@ -1,12 +1,28 @@
 [Unit]
 Description=USB-Watchdog
 
+DefaultDependencies=no
+
+Requires=dev-ttyWDG.device
+After=dev-ttyWDG.device
+Wants=dev-ttyWDG.device
+
+#After=network.target
+#Wants=network.target
+
+Requires=basic.target
+After=basic.target
+Wants=basic.target
+
+
 [Service]
-Type=simple
-ExecStart=/usr/bin/python3 /usr/local/sbin/watchdog.py --hb 180 /dev/ttyWDG
+Type=notify
+ExecStart=/usr/bin/python3 /usr/local/sbin/watchdog.py --hb 360 /dev/ttyWDG
 StandardInput=tty-force
 StandardOutput=journal
+Environment=PYTHONUNBUFFERED=1
+Restart=always
 
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=basic.target
