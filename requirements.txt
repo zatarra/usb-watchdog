@@ -1,1 +1,4 @@
-pyserial
+pyserial==3.4
+systemd-python==234
+#systemd==0.16.1
+
